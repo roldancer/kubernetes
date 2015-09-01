@@ -530,7 +530,29 @@ func makeEnvList(envs []kubecontainer.EnvVar) (result []string) {
 	for _, env := range envs {
 		result = append(result, fmt.Sprintf("%s=%s", env.Name, env.Value))
 	}
-	return
+
+func makeEnvList(envs []kubecontainer.EnvVar) (result []string) {
+	for _, env := range envs {
+		result = append(result, fmt.Sprintf("%s=%s", env.Name, env.Value))
+	}
+
+        // roldancer: I want to add all the variables at the node level that start with "kubernetes_"
+        var env []string
+        env = os.Environ()
+
+        fmt.Println("List of Environtment variables : \n")
+
+        for index, value := range env {
+          name := strings.Split(value, "=") // split by = sign
+
+          if strings.Contains(name[0], "kubernetes_") {
+            fmt.Printf("[%d] %s : %v\n", index, name[0], name[1])
+            result = append(result, fmt.Sprintf("%s=%s", name[0], name[1]))
+          }       
+        }
+        
+	return result
+}
 }
 
 // makeMountBindings converts the mount list to a list of strings that
